@@ -1,7 +1,7 @@
-Scaling [--solutionname--] With Kubernetes
+Scaling [cybersecurity-160-5567] With Kubernetes
 ===========================
 
-Generated On: --datetime-- UTC
+Generated On: 2024-12-02 18:33:06 UTC
 
 You can scale your solution with Kubernetes.  To do so, will will need to apply the following YAML files to your Kubernetes cluster.
 
@@ -33,13 +33,13 @@ You can scale your solution with Kubernetes.  To do so, will will need to apply 
    sudo systemctl restart docker
 
 
-Based on your TML solution [--solutionname--] - if you want to scale your application with Kubernetes - you will need to apply the following YAML files.
+Based on your TML solution [cybersecurity-160-5567] - if you want to scale your application with Kubernetes - you will need to apply the following YAML files.
 
 .. list-table::
 
    * - **YML File**
      - **Description**
-   * - :ref:`--solutionnamefile--`
+   * - :ref:`cybersecurity-160-5567.yml`
      - This is your main solution YAML file.  
  
        It MUST be applied to your Kubernetes cluster.
@@ -72,13 +72,13 @@ kubectl apply command
 
 .. code-block:: YAML
 
-   --kubectl--
+   kubectl apply -f mysql-storage.yml -f mysql-db-deployment.yml -f qdrant.yml -f privategpt.yml -f cybersecurity-160-5567.yml
 
---solutionnamefile--
+cybersecurity-160-5567.yml
 ------------------------
 
 .. important::
-   Copy and Paste this YAML file: --solutionnamefile-- - and save it locally.
+   Copy and Paste this YAML file: cybersecurity-160-5567.yml - and save it locally.
 
 .. attention::
 
@@ -98,8 +98,110 @@ kubectl apply command
 
 .. code-block:: YAML
 
-   ################# --solutionnamefile--
-   --solutionnamecode--
+   ################# cybersecurity-160-5567.yml
+   
+     apiVersion: apps/v1
+     kind: Deployment
+     metadata:
+       name: cybersecurity-160-5567
+     spec:
+       selector:
+         matchLabels:
+           app: cybersecurity-160-5567
+       replicas: 3 # tells deployment to run 1 pods matching the template
+       template:
+         metadata:
+           labels:
+             app: cybersecurity-160-5567
+         spec:
+           containers:
+           - name: cybersecurity-160-5567
+             image: anupampdl/cybersecurity-160-5567-amd64:latest
+             volumeMounts:
+             - name: dockerpath
+               mountPath: /var/run/docker.sock
+             ports:
+             - containerPort: 9002
+             - containerPort: 49443
+             - containerPort: 36031
+             - containerPort: 35183
+             env:
+             - name: TSS
+               value: '0'
+             - name: SOLUTIONNAME
+               value: 'cybersecurity-160-5567'
+             - name: SOLUTIONDAG
+               value: 'solution_preprocessing_ai_restapi_dag-cybersecurity-160-5567'
+             - name: GITUSERNAME
+               value: 'anupampDL'
+             - name: GITREPOURL
+               value: 'https://github.com/anupamPDL/raspberrypi'
+             - name: SOLUTIONEXTERNALPORT
+               value: '35183'
+             - name: CHIP
+               value: 'amd64'
+             - name: SOLUTIONAIRFLOWPORT
+               value: '49443'
+             - name: SOLUTIONVIPERVIZPORT
+               value: '36031'
+             - name: DOCKERUSERNAME
+               value: 'anupampdl'
+             - name: CLIENTPORT
+               value: '9002'
+             - name: EXTERNALPORT
+               value: '40101'
+             - name: KAFKACLOUDUSERNAME
+               value: ''
+             - name: VIPERVIZPORT
+               value: '9005'
+             - name: MQTTUSERNAME
+               value: 'apmpdl'
+             - name: AIRFLOWPORT
+               value: '9000'
+             - name: GITPASSWORD
+               value: '<ENTER GITHUB PASSWORD>'
+             - name: KAFKACLOUDPASSWORD
+               value: '<Enter API secret>'
+             - name: MQTTPASSWORD
+               value: '<ENTER MQTT PASSWORD>'
+             - name: READTHEDOCS
+               value: '<ENTER READTHEDOCS TOKEN>'
+             - name: qip 
+               value: 'privategpt-service' # This is private GPT service in kubernetes
+             - name: KUBE
+               value: '1'
+           volumes: 
+           - name: dockerpath
+             hostPath:
+               path: /var/run/docker.sock
+   ---
+     apiVersion: v1
+     kind: Service
+     metadata:
+       name: cybersecurity-160-5567-service
+       labels:
+         app: cybersecurity-160-5567-service
+     spec:
+       type: NodePort #Exposes the service as a node ports
+       ports:
+       - port: 9002
+         name: p1
+         protocol: TCP
+         targetPort: 9002
+       - port: 49443
+         name: p2
+         protocol: TCP
+         targetPort: 49443
+       - port: 36031
+         name: p3
+         protocol: TCP
+         targetPort: 36031
+       - port: 35183
+         name: p4
+         protocol: TCP
+         targetPort: 35183
+       selector:
+         app: cybersecurity-160-5567
 
 .. tip::
 
@@ -354,13 +456,13 @@ To visualize the dashboard you need to forward ports to your solution **deployme
 
 .. code-block::
 
-   --kube-portforward--
+   kubectl port-forward deployment/cybersecurity-160-5567 36031:36031
 
 After you forward the ports then copy/paste the viusalization URL below and run your dashboard.
 
 .. code-block::
 
-   --visualizationurl--
+   http://localhost:36031/dashboard.html?topic=iot-preprocess,iot-preprocess2&offset=-1&groupid=&rollbackoffset=400&topictype=prediction&append=0&secure=1
 
 Kubernetes Pod Access Commands
 ---------------------
